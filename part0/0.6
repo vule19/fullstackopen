@@ -1,0 +1,11 @@
+sequenceDiagram
+	participant user
+    participant browser
+    participant server
+	
+	user->>browser: writes notes and clicks "Save" button
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+    activate server
+    server-->>browser: HTTP status code 201 (Created)
+    deactivate server
