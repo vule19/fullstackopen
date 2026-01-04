@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import personsService from '/components/services.js'
+import personsService from '/components/services.jsx'
 import Notification from '../components/Notification'
 
 const Filter = ({value, onChange}) => {
