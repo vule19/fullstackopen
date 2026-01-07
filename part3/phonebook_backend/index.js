@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express()
-const morgan = require('morgan')
 app.use(express.json())
 app.use(express.static('dist'))
 
@@ -15,50 +14,43 @@ app.get('/api/persons', (request, response) => {
 
 app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id)
-  .then(person => {
+    .then(person => {
       if (person) {
         response.json(person)
       } else {
         response.status(404).end()
       }
     })
-    .catch(error => {
-      console.log(error)
-      response.status(400).send({ error: 'malformatted id' })
-    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
-    const id = request.params.id
-    Person.findByIdAndDelete(id)
-    .then(result => {
+  const id = request.params.id
+  Person.findByIdAndDelete(id)
+    .then(() => {
       response.status(204).end()
     })
-    .catch(error =>{
+    .catch(error => {
       next(error)
     })
 })
 
-const generateId = () => {
-    return Math.floor(Math.random() * 1000000).toString();
-}
-
 app.post('/api/persons', (request, response, next) => {
-    const body = request.body
-    if (!body.name) {
-        return response.status(400).json({
-            error: 'name missing'
-        })
-    }
+  const body = request.body
+  if (!body.name) {
+    return response.status(400).json({
+      error: 'name missing'
+    })
+  }
 
-    if (!body.number) {
-        return response.status(400).json({
-            error: 'number missing'
-        })
-    }
+  if (!body.number) {
+    return response.status(400).json({
+      error: 'number missing'
+    })
+  }
 
-    Person.findOne({name: body.name})
-      .then(existingPerson => {
+  Person.findOne({ name: body.name })
+    .then(existingPerson => {
       if (existingPerson) {
         return response.status(400).json({ error: 'name must be unique' })
       }
@@ -71,7 +63,7 @@ app.post('/api/persons', (request, response, next) => {
       return person.save()
     })
     .then(savedPerson => {
-      if (savedPerson) { 
+      if (savedPerson) {
         response.json(savedPerson)
       }
     })
@@ -98,18 +90,18 @@ app.put('/api/persons/:id', (request, response, next) => {
 })
 
 
-app.get('/info', (request, response) => {
-    const date = new Date()
-    Person.countDocuments({})
-      .then(count => {
-        response.send(
-          `<p>Phonebook has info for ${count} people</p>` +
-          `<p>${date}</p>`
-        )
-      })
-      .catch(error => {
-        next(error)
-      })
+app.get('/info', (request, response, next) => {
+  const date = new Date()
+  Person.countDocuments({})
+    .then(count => {
+      response.send(
+        `<p>Phonebook has info for ${count} people</p>` +
+        `<p>${date}</p>`
+      )
+    })
+    .catch(error => {
+      next(error)
+    })
 })
 
 const unknownEndpoint = (request, response) => {
