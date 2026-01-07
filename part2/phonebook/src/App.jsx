@@ -80,15 +80,18 @@ const App = () => {
           const updatedPersons = persons.map(p => p.id === existingPerson.id ? returnedPerson : p);
           setPersons(updatedPersons);
           setFilteredPersons(updatedPersons);
+          setNewName('')
+          setNewNumber('')
+          setErrorMessage({message: `Updated ${newName}`, type: 'success'});
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 1000);
         }).catch(error => {
-          console.error(`Error updating ${existingPerson.name}:`, error);
+          const errMsg = error.response.data.error 
+          setErrorMessage({ message: errMsg, type: 'error' })
+          setTimeout(() => setErrorMessage(null), 5000)
         });
-        setNewName('')
-        setNewNumber('')
-        setErrorMessage({message: `Updated ${newName}`, type: 'success'});
-        setTimeout(() => {
-          setErrorMessage(null);
-        }, 1000);
+        
       }
     }
     else {
@@ -96,13 +99,19 @@ const App = () => {
         const updatedPersons = persons.concat(returnedPerson)
         setPersons(updatedPersons)
         setFilteredPersons(updatedPersons)
+        setErrorMessage({message: `Added ${newName}`, type: 'success'});
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 1000);
+      })
+      .catch(error => {
+        const errMsg = error.response.data.error 
+        setErrorMessage({ message: errMsg, type: 'error' })
+        setTimeout(() => setErrorMessage(null), 5000)
       })
       setNewName('')
       setNewNumber('')
-      setErrorMessage({message: `Added ${newName}`, type: 'success'});
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 1000);
+      
     }
   }
 
