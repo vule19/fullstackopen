@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 require('dotenv').config()
 
-const url = process.env.VITE_MONGO_URL
+const url = process.env.MONGODB_URI
 
 mongoose.set('strictQuery', false)
 
