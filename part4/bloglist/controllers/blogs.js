@@ -60,9 +60,9 @@ blogsRouter.delete('/:id', async (request, response) => {
   
   const blog = await Blog.findById(request.params.id)
   if (!blog) {
-    response.status(404).json({ error: 'blog not found' })
+    return response.status(404).json({ error: 'blog not found' })
   }
-  if ( blog.user.toString() === decodedToken.id.toString() ) {
+  if ( blog.user.toString() !== decodedToken.id.toString() ) {
     return response.status(401).json({
       error: 'only the creator can delete'
     })
@@ -74,19 +74,32 @@ blogsRouter.delete('/:id', async (request, response) => {
 
 })
 
-blogsRouter.put('/:id', async (request, response) => {
-  const {likes} = request.body
-  const updatedBlog = await Blog.findByIdAndUpdate(
-    request.params.id, 
-    { likes }
-  )
-  if (updatedBlog) {
-    response.json(blog)
-  }
-  else {
-    response.status(404).json({ error: 'Blog not found' })
-  }
+blogsRouter.put('/:id', async (request, response, next) => {
+  const body = request.body
   
+  const update = {}
+  if (body.title !== undefined) update.title = body.title
+  if (body.author !== undefined) update.author = body.author
+  if (body.url !== undefined) update.url = body.url
+  if (body.likes !== undefined) update.likes = body.likes
+  if (body.user !== undefined) update.user = body.user.id || body.user
+
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      request.params.id,
+      update,
+      { new: true, runValidators: true, context: 'query' }
+    ).populate('user', { username: 1, name: 1 })
+
+    if (updatedBlog) {
+      response.json(updatedBlog)
+    } else {
+      response.status(404).end()
+    }
+  } catch (error) {
+    next(error)
+  }
 })
+
 
 module.exports = blogsRouter

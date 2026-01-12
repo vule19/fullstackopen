@@ -1,4 +1,4 @@
-const Login = ({ username, handleLogout }) => (
+const UserInfo = ({ username, handleLogout }) => (
     <div>{username} logged in
         <form onSubmit={handleLogout}>
             <button type="submit">logout</button>
@@ -6,4 +6,4 @@ const Login = ({ username, handleLogout }) => (
     </div>
 )
 
-export default Login
+export default UserInfo

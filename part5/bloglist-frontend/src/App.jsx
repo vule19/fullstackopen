@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import Login from "./components/Login"
+import UserInfo from "./components/UserInfo"
 import AddBlog from './components/AddBlog'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -12,6 +13,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
+  const [addBlogVisible, setAddBlogVisible] = useState(false)
 
   const handleLogin = async event => {
     event.preventDefault()
@@ -111,10 +113,15 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification message={errorMessage}></Notification>
-      <Login username={username} handleLogout={handleLogout}></Login>
-      <AddBlog addBlog={addBlog}></AddBlog>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      <UserInfo username={username} handleLogout={handleLogout}></UserInfo>
+      <Togglable buttonLabel="create new blog">
+        <AddBlog addBlog={addBlog}></AddBlog>
+      </Togglable>    
+      {[...blogs]
+        .sort((bloga, blogb) => blogb.likes - bloga.likes)
+        .map(blog =>
+        <Blog key={blog.id} user={user} blog={blog}>
+        </Blog>
       )}
     </div>
   )
