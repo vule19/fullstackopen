@@ -13,8 +13,8 @@ const Blog = ({ user, blog }) => {
     marginBottom: 5
   }
   return (
-    <div style={blogStyle}>
-      {blog.title}
+    <div className="blog" style={blogStyle}>
+      {blog.title} {blog.author}
       <Togglable buttonLabel="view">
           <ViewBlog blog={blog} user={user}></ViewBlog>
         </Togglable> 
