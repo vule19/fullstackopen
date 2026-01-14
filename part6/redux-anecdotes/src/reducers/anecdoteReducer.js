@@ -1,6 +1,8 @@
+import { createSlice } from '@reduxjs/toolkit'
+
 export const voteAnecdote = (id) => {
   return {
-    type: 'VOTE',
+    type: 'anecdotes/vote',
     id: id
   }
 }
@@ -26,29 +28,54 @@ const asObject = anecdote => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-const reducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
-
-  const toChange = state.find(n => n.id === action.id)
-  switch (action.type) {
-    case 'VOTE':
+const anecdoteSlice = createSlice({
+  name: 'anecdotes',
+  initialState,
+  reducers: {
+    addAnecdote(state, action) {
+      const newAnecdote = {
+        content: action.content,
+        id: getId(),
+        votes: 0
+      }
+      state.push(newAnecdote)
+    },
+    vote(state, action) {
+      const toChange = state.find(n => n.id === action.id)
       const votedObject = {
         content: toChange.content,
         id: toChange.id,
         votes: toChange.votes + 1
       }
       return state.map(anecdote => anecdote.id === action.id ? votedObject : anecdote)
-    case 'ADD':
-      const newAnecdote = {
-        content: action.content,
-        id: getId(),
-        votes: 0
-      }
-      return state.concat(newAnecdote)
-    default:
-      return state
+    }
   }
-}
+})
 
-export default reducer
+// const anecdoteReducer = (state = initialState, action) => {
+//   console.log('state now: ', state)
+//   console.log('action', action)
+
+//   const toChange = state.find(n => n.id === action.id)
+//   switch (action.type) {
+//     case 'VOTE':
+//       const votedObject = {
+//         content: toChange.content,
+//         id: toChange.id,
+//         votes: toChange.votes + 1
+//       }
+//       return state.map(anecdote => anecdote.id === action.id ? votedObject : anecdote)
+//     case 'ADD':
+//       const newAnecdote = {
+//         content: action.content,
+//         id: getId(),
+//         votes: 0
+//       }
+//       return state.concat(newAnecdote)
+//     default:
+//       return state
+//   }
+// }
+
+export const { addAnecdote, vote } = anecdoteSlice.actions
+export default anecdoteSlice.reducer

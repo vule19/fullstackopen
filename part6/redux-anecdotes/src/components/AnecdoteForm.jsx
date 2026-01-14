@@ -1,4 +1,4 @@
-const AnecdoteForm = (addAnecdote) => {
+const AnecdoteForm = ({addAnecdote}) => {
     return (
         <div>
             <h2>create new</h2>
