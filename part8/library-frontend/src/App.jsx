@@ -1,0 +1,49 @@
+import { useState } from 'react'
+import Authors from './components/Authors'
+import Books from './components/Books'
+import NewBook from './components/NewBook'
+import EditAuthor from './components/EditAuthor'
+import { useQuery } from '@apollo/client/react'
+import { ALL_AUTHORS, ALL_BOOKS } from './components/queries'
+
+const App = () => {
+  const [page, setPage] = useState('authors')
+  const authors = useQuery(ALL_AUTHORS)
+  const books = useQuery(ALL_BOOKS)
+
+  if (authors.loading || books.loading) {
+    return <div>loading...</div>
+  }
+
+  if (authors.error || books.error) {
+    return <div>Error: {authors.error?.message || books.error?.message}</div>
+  }
+
+  console.log(authors)
+  console.log(books)
+
+  return (
+    <div>
+      <div>
+        <button onClick={() => setPage('authors')}>authors</button>
+        <button onClick={() => setPage('books')}>books</button>
+        <button onClick={() => setPage('add')}>add book</button>
+        <button onClick={() => setPage('edit')}>edit author</button>
+      </div>
+
+      {/* <div>
+      {result.data.allAuthors.map(p => p.name).join(', ')}
+    </div> */}
+
+      <Authors show={page === 'authors'} authors={authors.data.allAuthors} />
+
+      <Books show={page === 'books'} books={books.data.allBooks} />
+
+      <NewBook show={page === 'add'} />
+
+      <EditAuthor show={page === 'edit'} />
+    </div>
+  )
+}
+
+export default App
