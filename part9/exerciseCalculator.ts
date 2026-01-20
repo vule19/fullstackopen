@@ -22,9 +22,12 @@ const parseArguments = (args: string[]): Values => {
             arr: args.slice(3).map(val => Number(val))
         }
     }
+    else {
+        throw new Error('Missing arguments') 
+    }
 }
 
-const calculateExercises = (hours: number[], target: number) : Result => {   
+export const calculateExercises = (hours: number[], target: number) : Result => {   
     const numberOfDays = hours.length
     const trainingDays = hours.filter(h => h !== 0).length
     const average = hours.reduce((hour, curr) => hour + curr, 0) / numberOfDays
